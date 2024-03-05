@@ -17,4 +17,3 @@ Installation with pip: <br/>
 Edit alembic.ini and run <br/>
     alembic revision --autogenerate -m "Initial" <br/>
     alembic upgrade head <br/>
-	Это блок кода
