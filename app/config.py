@@ -11,5 +11,3 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 ACCESS_TOKEN_EXPIRE_MINUTES = 360
 
 ALGORITHM = os.getenv("ALGORITHM")
-
-denylist = []
