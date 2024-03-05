@@ -16,7 +16,7 @@ from auth.backend import (
 from auth.database.schemas import UserCreate, UserUpdate, UserData
 from auth.database.queries import UserObjects, get_userobjects_dependency
 from auth.database.models import User
-from config import ACCESS_TOKEN_EXPIRE_MINUTES, denylist
+from config import ACCESS_TOKEN_EXPIRE_MINUTES
 
 router = APIRouter()
 
