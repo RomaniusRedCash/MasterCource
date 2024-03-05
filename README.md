@@ -13,7 +13,7 @@ Windows: <br/>
 Installation with pip: <br/>
 ```pip install -r requirements.txt```
 ---
-4) Make migrations with Alembic <br/>
+3) Make migrations with Alembic <br/>
 Edit alembic.ini and run <br/>
 ```alembic revision --autogenerate -m "Initial"``` <br/>
 ```alembic upgrade head```
