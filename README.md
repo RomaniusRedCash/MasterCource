@@ -1,17 +1,17 @@
 # Simple JWT auth on FastAPI
 
 ## Get Started
-1) Copy repo \n
+1) Copy repo <br/>
 ```git clone https://github.com/aqmink/FastAPI-JWT-auth-SQLModel```
-2) Install requirements
-create virtual enviroment
-```python -m venv venv```
-and activate it
-Windows:
-```venv\Scripts\activate```
-Installation with pip:
+2) Install requirements <br/>
+create virtual enviroment <br/>
+```python -m venv venv``` <br/>
+and activate it <br/>
+Windows: <br/>
+```venv\Scripts\activate``` <br/>
+Installation with pip: <br/>
 ```pip install -r requirements.txt```
-3) Make migrations with Alembic
-Edit alembic.ini and run
-```alembic revision --autogenerate -m "Initial"```
+3) Make migrations with Alembic <br/>
+Edit alembic.ini and run <br/>
+```alembic revision --autogenerate -m "Initial"``` <br/>
 ```alembic upgrade head```
