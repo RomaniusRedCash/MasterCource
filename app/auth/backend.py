@@ -8,7 +8,7 @@ from bcrypt import checkpw
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
-from config import ALGORITHM, SECRET_KEY, denylist
+from config import ALGORITHM, SECRET_KEY
 from auth.database.models import User
 from auth.database.schemas import UserCreate
 from auth.database.queries import UserObjects, get_userobjects_dependency
