@@ -5,9 +5,6 @@ from pydantic import BaseModel, EmailStr
 from fastapi import Form, Depends
 
 
-
-
-
 class BaseUserModel(BaseModel):
     username: Annotated[str, Form(max_length=50)]
     email: Annotated[EmailStr, Form(max_length=50)]
