@@ -19,5 +19,3 @@ response = requests.post(
 token = response.json().get('access_token', None)
 
 response = requests.get("https://stepik.org/api/courses")
-
-pprint(response.text)

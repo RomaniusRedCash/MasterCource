@@ -1,7 +1,6 @@
 from typing import Annotated
 from datetime import timedelta
 
-from bcrypt import checkpw
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm

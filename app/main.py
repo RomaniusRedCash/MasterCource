@@ -10,20 +10,6 @@ app = FastAPI()
 
 app.include_router(users_router.router)
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["localhost"],
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "OPTIONS", "DELETE", "PATCH", "PUT", "HEAD", "CONNECT"],
-    allow_headers=[
-        "Content-Type", 
-        "Set-Cookie", 
-        "Access-Control-Allow-Headers", 
-        "Access-Control-Allow-Origin",
-        "Authorization"
-    ],
-)
-
 
 @app.middleware("http")
 async def show_request(request: Request, call_next: Callable[..., Response]):
