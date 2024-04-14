@@ -2,7 +2,7 @@ from typing import Annotated
 from datetime import timedelta
 
 from bcrypt import checkpw
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Response
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 
@@ -18,7 +18,7 @@ from auth.database.queries import UserObjects, get_userobjects_dependency
 from auth.database.models import User
 from config import ACCESS_TOKEN_EXPIRE_MINUTES
 
-router = APIRouter()
+router = APIRouter(prefix="/api")
 
 
 @router.post(
@@ -29,28 +29,29 @@ router = APIRouter()
     }
 )
 async def sign_up(
-    form_data: Annotated[UserCreate, Depends()],
+    form_data: UserCreate,
     users: Annotated[UserObjects, Depends(get_userobjects_dependency)],
 ):
     await authorize_user(form_data, users)
     return JSONResponse(
-        content=form_data.model_dump(exclude=["password"]), 
+        content=form_data.model_dump(exclude=["password"]),
         status_code=status.HTTP_201_CREATED
     )
 
 
 @router.post(
     path="/token",
-    responses={400: {"description": "Wrong input"}}
+    responses={400: {"description": "Invalid username or password"}}
 )
 async def sign_in(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    users: Annotated[UserObjects, Depends(get_userobjects_dependency)]
+    users: Annotated[UserObjects, Depends(get_userobjects_dependency)],
+    response: Response
 ) -> Token:
     user = await authenticate_user(
         users=users, 
         username=form_data.username, 
-        password=form_data.password
+        password=form_data.password,
     )
     if not user:
         raise HTTPException(
@@ -62,7 +63,8 @@ async def sign_in(
         data={"sub": form_data.username}, 
         expires_delta=access_token_expires
     )
-    return Token(access_token=access_token, token_type="Bearer")
+    response.set_cookie("auth", access_token)
+    return Token(access_token=access_token, token_type="bearer")
 
 
 @router.get("/profiles/{login}", response_model=UserData)
@@ -102,18 +104,6 @@ async def update_me(
     except ValueError:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT)
     return await users.get_user_by_name(form_data.username)
-
-
-@router.post("/me/updatePassword")
-async def update_password(
-    current_user: Annotated[User, Depends(get_current_user)],
-    users: Annotated[UserObjects, Depends(get_userobjects_dependency)],
-    old_password: str,
-    new_password: str
-):
-    if not checkpw(old_password.encode(), current_user.password.encode()):
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
-    await users.update_password(current_user.username, new_password)
 
 
 @router.delete("/me/delete")

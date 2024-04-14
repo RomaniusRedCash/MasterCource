@@ -8,8 +8,8 @@ from fastapi import Form, Depends
 class BaseUserModel(BaseModel):
     username: Annotated[str, Form(max_length=50)]
     email: Annotated[EmailStr, Form(max_length=50)]
-    phone: Optional[Annotated[str, Form(max_length=20, pattern="\+[\d]+")]] = None
-    image: Optional[Annotated[str, Form(max_length=200)]] = None
+    phone: Optional[Annotated[str | None, Form(max_length=20, pattern="\+[\d]+")]] = None
+    image: Optional[Annotated[str | None, Form(max_length=200)]] = None
     is_public: Annotated[bool, Form()]
 
 

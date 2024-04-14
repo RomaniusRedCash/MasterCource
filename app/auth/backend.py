@@ -4,7 +4,7 @@ from datetime import timedelta, datetime
 from pydantic import BaseModel
 from jose import jwt, JWTError
 from bcrypt import checkpw
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Cookie
 from fastapi.security import OAuth2PasswordBearer
 
 from config import ALGORITHM, SECRET_KEY
@@ -12,7 +12,7 @@ from auth.database.models import User
 from auth.database.schemas import UserCreate
 from auth.database.queries import UserObjects, get_userobjects_dependency
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/token")
 
 
 class Token(BaseModel):
@@ -69,21 +69,20 @@ def create_access_token(
     else:
         expire = datetime.utcnow() + timedelta(minutes=15)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, ALGORITHM)
     return encoded_jwt
 
 
 async def get_current_user(
     token: Annotated[str, Depends(oauth2_scheme)],
-    users: Annotated[UserObjects, Depends(get_userobjects_dependency)]
+    users: Annotated[UserObjects, Depends(get_userobjects_dependency)],
+    auth_cookie: str | None = Cookie(alias="auth")
 ) -> User:
     exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
     try:
-        payload = jwt.decode(
-            token=token, key=SECRET_KEY, algorithms=[ALGORITHM]
-        )
+        payload = jwt.decode(token, SECRET_KEY, [ALGORITHM])
         username = payload.get("sub")
-        if username is None:
+        if not username:
             raise exception
         token_data = TokenData(username=username)
     except JWTError:

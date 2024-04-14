@@ -1,11 +1,41 @@
+from typing import Callable
+
 import uvicorn
-from fastapi import FastAPI, Response, status
+from fastapi import FastAPI, Response, status, Request
+from fastapi.middleware.cors import CORSMiddleware
 
 from auth.routers import users_router
 
 app = FastAPI()
 
 app.include_router(users_router.router)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["localhost"],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "OPTIONS", "DELETE", "PATCH", "PUT", "HEAD", "CONNECT"],
+    allow_headers=[
+        "Content-Type", 
+        "Set-Cookie", 
+        "Access-Control-Allow-Headers", 
+        "Access-Control-Allow-Origin",
+        "Authorization"
+    ],
+)
+
+
+@app.middleware("http")
+async def show_request(request: Request, call_next: Callable[..., Response]):
+    body = await request.body()
+    print("body:", body.decode())
+    print("headers:", request.headers)
+    print("query:", request.path_params)
+    print("path:", request.query_params)
+    print("client:", request.client)
+    print("cookie:", request.cookies)
+    response = await call_next(request)
+    return response
 
 
 @app.get("/")
